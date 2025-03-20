@@ -1,13 +1,17 @@
 FROM jenkins/jenkins:lts
-#FROM ubuntu:20.04
-# if we want to install via apt
+
 USER root
-RUN apt-get update && apt-get install -y make && apt-get install -y g++ --fix-missing
-# drop back to the regular jenkins user - good practice
+
+# Update package lists first
+RUN apt-get update
+
+# Install make
+RUN apt-get install -y --no-install-recommends make
+
+# Fix broken dependencies, then install g++
+RUN apt-get install -y --fix-missing --no-install-recommends g++ || (dpkg --configure -a && apt-get install -y --fix-missing --no-install-recommends g++)
+
+# Clean up
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
 USER jenkins
-
-
-
-
-
-
